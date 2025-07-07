@@ -1,0 +1,27 @@
+name: CI/CD for Weather Data
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r data_pipeline/requirements.txt
+
+      - name: Run weather fetch script
+        env:
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+          STORAGE_CONN_STRING: ${{ secrets.STORAGE_CONN_STRING }}
+        run: python data_pipeline/fetch_weather.py
+
